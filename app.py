@@ -253,7 +253,7 @@ if page == "Home":
 
     with col2:
         st.image(
-            "https://www.omniconvert.com/blog/wp-content/uploads/2020/11/RFM-analysis-dashboard-1024x576.png",
+            "https://images.pexels.com/photos/669610/pexels-photo-669610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
             caption="RFM Customer Segmentation Dashboard",
             use_column_width=True
         )
