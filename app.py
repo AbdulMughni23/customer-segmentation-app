@@ -11,6 +11,7 @@ import requests
 from datetime import datetime, timedelta
 import plotly.express as px
 import plotly.graph_objects as go
+from ucimlrepo import fetch_ucirepo 
 
 # Set page configuration
 st.set_page_config(
@@ -31,14 +32,18 @@ Upload your own data or use the sample Online Retail dataset.
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Home", "Data Upload", "RFM Analysis", "Clustering", "Marketing Strategy"])
 
+
+  
+
+
+
 # Function to load sample data
 @st.cache_data
 def load_sample_data():
-    url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx"
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        df = pd.read_excel(io.BytesIO(response.content))
+        # fetch dataset 
+        online_retail = fetch_ucirepo(id=352) 
+        df = online_retail.data.original
         return df
     except Exception as e:
         st.error(f"Error loading sample data: {e}")
@@ -147,28 +152,33 @@ def name_clusters(rfm_df_with_clusters):
     # Compute the mean of RFM features per cluster
     cluster_profiles = rfm_df_with_clusters.groupby('Cluster')[['Recency', 'Frequency', 'Monetary']].mean()
     
+    thresholds = {
+    'recency_low': cluster_profiles['Recency'].quantile(0.25),  # Lower = better
+    'frequency_high': cluster_profiles['Frequency'].quantile(0.75),
+    'monetary_high': cluster_profiles['Monetary'].quantile(0.75)
+}
+
     # Initialize cluster names dictionary
     cluster_names = {}
-    
-    # Determine cluster names dynamically based on their characteristics
     for cluster in cluster_profiles.index:
         recency = cluster_profiles.loc[cluster, 'Recency']
         frequency = cluster_profiles.loc[cluster, 'Frequency']
         monetary = cluster_profiles.loc[cluster, 'Monetary']
-        
-        # Logic for naming clusters
-        if frequency > cluster_profiles['Frequency'].mean() and monetary > cluster_profiles['Monetary'].mean() and recency < cluster_profiles['Recency'].mean():
-            cluster_names[cluster] = "High-Value Champions"
-        elif frequency > cluster_profiles['Frequency'].mean() and monetary > cluster_profiles['Monetary'].median():
-            cluster_names[cluster] = "Loyal Customers"
-        elif recency < cluster_profiles['Recency'].median() and monetary < cluster_profiles['Monetary'].median():
-            cluster_names[cluster] = "Potential Loyalists"
-        elif recency > cluster_profiles['Recency'].mean() and frequency < cluster_profiles['Frequency'].mean():
-            cluster_names[cluster] = "At Risk Customers"
-        elif recency > cluster_profiles['Recency'].mean() and frequency > cluster_profiles['Frequency'].median():
-            cluster_names[cluster] = "Can't Lose Them"
+
+        # Priority order: Most valuable segments first!
+        if (recency <= thresholds['recency_low']) and \
+           (frequency >= thresholds['frequency_high']) and \
+           (monetary >= thresholds['monetary_high']):
+            cluster_names[cluster] = "Elite Customers"
+        elif (frequency >= thresholds['frequency_high']) and \
+             (monetary >= thresholds['monetary_high']):
+            cluster_names[cluster] = "Loyal High-Spenders"
+        elif (recency <= thresholds['recency_low']):
+            cluster_names[cluster] = "Recently Active"
+        elif (recency > cluster_profiles['Recency'].quantile(0.9)):
+            cluster_names[cluster] = "Churned Customers"
         else:
-            cluster_names[cluster] = f"Segment {cluster}"
+            cluster_names[cluster] = f"Segment {cluster} (Neutral)"
     
     return cluster_profiles, cluster_names
 
@@ -229,32 +239,36 @@ if page == "Home":
     # -------------------------------------------------------------------------------------------------------------------------------------------------------
     
     with col1:
-        st.markdown(""""
-        How It Works
-        \
-        1. **Upload** your retail transaction data\
-        2. **Clean** the data automatically\
-        3. **Generate** RFM analysis\
-        4. **Create** customer segments\
-        5. **Develop** targeted marketing strategies\
-        
-        This tool uses K-Means clustering on RFM (Recency, Frequency, Monetary) 
-        features to identify meaningful customer segments.
+        st.markdown("""
+            ### How It Works  
+            1. **Upload** your retail transaction data  
+            2. **Clean** the data automatically  
+            3. **Generate** RFM analysis  
+            4. **Create** customer segments  
+            5. **Develop** targeted marketing strategies  
+
+            This tool uses K-Means clustering on RFM (Recency, Frequency, Monetary)  
+            features to identify meaningful customer segments.
         """)
-    
+
     with col2:
-        st.image("https://via.placeholder.com/400x250?text=RFM+Segmentation", 
-                 caption="RFM Customer Segmentation")
-    
-    st.markdown(""""
-    Benefits\
-    - **Better understand** your customer base\
-    - **Identify** high-value customers\
-    - **Discover** at-risk customers\
-    - **Create** targeted marketing campaigns\
-    - **Improve** customer retention\
-    - **Increase** customer lifetime value\
+        st.image(
+            "https://www.omniconvert.com/blog/wp-content/uploads/2020/11/RFM-analysis-dashboard-1024x576.png",
+            caption="RFM Customer Segmentation Dashboard",
+            use_column_width=True
+        )
+
+
+    st.markdown("""
+        ### Benefits  
+        - **Better understand** your customer base  
+        - **Identify** high-value customers  
+        - **Discover** at-risk customers  
+        - **Create** targeted marketing campaigns  
+        - **Improve** customer retention  
+        - **Increase** customer lifetime value  
     """)
+
 
     # -------------------------------------------------------------------------------------------------------------------------------------------------------
     
