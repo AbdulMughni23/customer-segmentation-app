@@ -309,6 +309,7 @@ elif page == "Data Upload":
     if st.session_state.data is not None:
         st.subheader("Data Preview")
         st.dataframe(st.session_state.data.head())
+        st.session_state.data['InvoiceDate'] = pd.to_datetime(st.session_state.data['InvoiceDate'])
         
         st.subheader("Data Information")
         col1, col2 = st.columns(2)
