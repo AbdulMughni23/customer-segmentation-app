@@ -1,4 +1,3 @@
-setup_sh = """
 mkdir -p ~/.streamlit/
 
 echo "[theme]

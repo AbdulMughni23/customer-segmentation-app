@@ -230,12 +230,13 @@ if page == "Home":
     
     with col1:
         st.markdown(""""
-        ### How It Works
-        1. **Upload** your retail transaction data
-        2. **Clean** the data automatically
-        3. **Generate** RFM analysis
-        4. **Create** customer segments
-        5. **Develop** targeted marketing strategies
+        How It Works
+        \
+        1. **Upload** your retail transaction data\
+        2. **Clean** the data automatically\
+        3. **Generate** RFM analysis\
+        4. **Create** customer segments\
+        5. **Develop** targeted marketing strategies\
         
         This tool uses K-Means clustering on RFM (Recency, Frequency, Monetary) 
         features to identify meaningful customer segments.
@@ -246,13 +247,13 @@ if page == "Home":
                  caption="RFM Customer Segmentation")
     
     st.markdown(""""
-    ### Benefits
-    - **Better understand** your customer base
-    - **Identify** high-value customers
-    - **Discover** at-risk customers
-    - **Create** targeted marketing campaigns
-    - **Improve** customer retention
-    - **Increase** customer lifetime value
+    Benefits\
+    - **Better understand** your customer base\
+    - **Identify** high-value customers\
+    - **Discover** at-risk customers\
+    - **Create** targeted marketing campaigns\
+    - **Improve** customer retention\
+    - **Increase** customer lifetime value\
     """)
 
     # -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -639,5 +640,6 @@ elif page == "Marketing Strategy":
 # Footer
 st.markdown("---")
 st.markdown("Customer Segmentation Tool | Built with Streamlit")
-st.markdown("© 2025 Data Science Team")
+st.markdown("© 2025 Mohammad Abdul Mughni")
+st.markdown("This app is for educational purposes only. Please ensure compliance with data privacy regulations when using real customer data.")
 
