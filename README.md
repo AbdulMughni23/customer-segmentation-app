@@ -36,6 +36,3 @@ The app uses the Online Retail dataset from the UCI Machine Learning Repository,
 - Python 3.8+
 - See requirements.txt for package dependencies
 
-## Author
-
-Data Science Team
